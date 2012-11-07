@@ -52,7 +52,7 @@ auth = (username,password)
 
 
 #create a requests session
-s = requests.session(auth=auth)
+s = requests.session(auth=auth,timeout=10)
 
 class Course:
     def __init__(self,name='', link='', files={}):
