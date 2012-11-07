@@ -14,6 +14,7 @@ import pprint
 import _thread
 import platform
 import getpass
+import argparse
 
 #external libs
 from bs4 import BeautifulSoup
@@ -31,9 +32,22 @@ if platform.system() == "Windows":
     basepath = os.path.abspath(basepath)
     basepath = '\\\\?\\'+basepath #the \\?\ prefix fixes path length cap on windows
 
+# parse arguments
+parser = argparse.ArgumentParser(description="Sync L2P to a local directory")
+parser.add_argument('-u', '--user', dest='user', help='specify username instead of asking interactively')
+parser.add_argument('-p', '--password', dest='password', help='specify password instead of asking interactively')
+parser.add_argument('-l', '--list-only', dest='listflag', action="store_true", help='only list files, do not download them')
+args = parser.parse_args()
+
 print("L2P sync script")
-username = input("user: ")
-password = getpass.getpass("password: ")
+if not args.user:
+    username = input("user: ")
+else:
+    username = args.user
+if not args.password:
+    password = getpass.getpass("password: ")
+else:
+    password = args.password
 auth = (username,password)
 
 
@@ -45,6 +59,7 @@ class Course:
         self.name = name
         self.link = link
         self.files = files
+        self.total = 0 #total number of files
 
     def __repr__(self):
         return self.name
@@ -105,6 +120,7 @@ class Course:
         url = baseurl + self.link
         url = url + course_materials
         self.files = self.scrapeFiles(url)
+        self.total = recCount(self.files)
     
     def sync(self):
         base = os.path.join(basepath, escape(self.name))
@@ -131,7 +147,18 @@ def getCourses(summarypage):
         courses.append(Course(name=title, link=base[0]))
     return courses
 
+def printTree(dictionary, indentation):
+    '''prettyprint a directory listing'''
+    for k,v in dictionary.items():
+        if type(v) == dict:
+            print(indentation*'   '+k.upper()) # print directories in upper case
+            printTree(v, indentation+1)
+        else:
+            print(indentation*'   '+k)
+
 def escape(string):
+    '''escapes characters in strings that are not allowed in
+       Windows directory names.'''
     string = string.replace('.','')
     string = string.replace(':','')
     string = string.replace('/','')
@@ -144,12 +171,18 @@ def escape(string):
     string = string.replace('"','')
     return string
 
-page = s.get(baseurl+summary).content
-courses = getCourses(page)
-print("Collecting Files")
-for c in courses:
-    c.walk()
-print("Found %d files in %d courses\n" % (sum(map(recCount,courses)),len(courses)))
-print("Downloading Files")
-for c in courses:
-    c.sync()
+if __name__ == "__main__":
+    page = s.get(baseurl+summary).content
+    courses = getCourses(page)
+    print("Collecting Files")
+    for c in courses:
+        c.walk()
+    print("Found %d files in %d courses\n" % (sum(map(recCount,courses)),len(courses)))
+    if args.listflag: #pretty print all files
+        for c in courses:
+            printTree({c.name: c.files}, 0)
+    else:
+        print("Downloading Files")
+        for c in courses:
+            c.sync()
+
