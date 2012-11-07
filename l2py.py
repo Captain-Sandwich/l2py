@@ -98,7 +98,7 @@ class Course:
             else:
                 url = baseurl + value
                 fpath = os.path.join(path,name)
-                print("syncing %s" % fpath)
+                print("syncing %s" % name)
                 r = s.get(url, prefetch=False)
                 if os.path.exists(fpath):
                     mtime = os.path.getmtime(fpath)
