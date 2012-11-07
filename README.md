@@ -28,9 +28,15 @@ Both are available on pip
 Usage
 -----
 
-    ./l2py.py
+    l2py.py [-h] [-u USER] [-p PASSWORD] [-l]
 
-The script asks for your username and password and then starts to do its magic.
+Sync L2P to a local directory
+
+optional arguments:
+
+    -h, --help                        show this help message and exit
+    -u USER, --user USER              specify username instead of asking inte
+    -p PASSWORD, --password PASSWORD  specify password instead of asking inte
 
 [bs]: http://www.crummy.com/software/BeautifulSoup/
 [req]: http://docs.python-requests.org/en/latest/
