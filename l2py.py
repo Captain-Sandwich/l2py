@@ -28,19 +28,20 @@ summary = '/foyer/summary/default.aspx'
 course_summary = '/information/default.aspx'
 course_materials = '/materials/default.aspx'
 
-basepath = os.path.join('.','L2P')
-if platform.system() == "Windows":
-    basepath = os.path.abspath(basepath)
-    basepath = '\\\\?\\'+basepath #the \\?\ prefix fixes path length cap on windows
-if not os.path.exists(basepath):
-    os.mkdir(basepath)
-
 # parse arguments
 parser = argparse.ArgumentParser(description="Sync L2P to a local directory")
 parser.add_argument('-u', '--user', dest='user', help='specify username instead of asking interactively')
 parser.add_argument('-p', '--password', dest='password', help='specify password instead of asking interactively')
 parser.add_argument('-l', '--list-only', dest='listflag', action="store_true", help='only list files, do not download them')
+parser.add_argument('-d', '--directory', dest='dir', default='L2P', help='specify directory to sync to (default: ./L2P)')
 args = parser.parse_args()
+
+basepath = os.path.join('.',args.dir)
+if platform.system() == "Windows":
+    basepath = os.path.abspath(basepath)
+    basepath = '\\\\?\\'+basepath #the \\?\ prefix fixes path length cap on windows
+if not os.path.exists(basepath):
+    os.mkdir(basepath)
 
 print("L2P sync script")
 if not args.user:
@@ -167,7 +168,7 @@ class Progress():
 
     def tick(self,name):
         self.counter += 1
-        print("syncing %s. \tFile %d/%d (%d%%)" % (name, self.counter, self.total, self.counter/self.total * 100), end='\r')
+        print("syncing %s. \t\t\t%d/%d (%d%%)" % (name, self.counter, self.total, self.counter/self.total * 100), end='\r')
 
 class CourseProgress(Progress):
     def tick(self,name):
