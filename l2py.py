@@ -36,7 +36,10 @@ parser.add_argument('-l', '--list-only', dest='listflag', action="store_true", h
 parser.add_argument('-d', '--directory', dest='dir', default='L2P', help='specify directory to sync to (default: ./L2P)')
 args = parser.parse_args()
 
-basepath = os.path.join('.',args.dir)
+if os.path.isabs(args.dir):
+    basepath = args.dir
+else:
+    basepath = os.path.join('.',args.dir)
 if platform.system() == "Windows":
     basepath = os.path.abspath(basepath)
     basepath = '\\\\?\\'+basepath #the \\?\ prefix fixes path length cap on windows
