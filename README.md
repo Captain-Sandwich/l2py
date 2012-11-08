@@ -18,8 +18,9 @@ The script mirrors all files to a local folder.
 Installation
 ------------
 L2Py has dependencies:
-- [requests] [req]
-- [BeautifulSoup] [bs]
+
+  - [requests] [req]
+  - [BeautifulSoup] [bs]
 
 Both are available on pip
 
