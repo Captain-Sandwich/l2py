@@ -29,7 +29,7 @@ Both are available on pip
 Usage
 -----
 
-    l2py.py [-h] [-u USER] [-p PASSWORD] [-l]
+    l2py.py [-h] [-u USER] [-p PASSWORD] [-d DIR] [-l]
 
 Sync L2P to a local directory
 
